@@ -3,7 +3,7 @@
 - 这三个函数存在的意义是什么？
 -改变函数执行时的上下文环境
 -具体一点就是改变函数执行时的this指向
-```
+```javascript
 fucntion Person(name) {
   this.name = name;
 }
@@ -21,13 +21,13 @@ person.showName();  // 输出xxx
 ```
 接下来
 
-```
+```javascript
 let animal = {
   name: 'cat'
 }
 ```
 
-```
+```javascript
 // call
 person.showName.call(animal);
 // apply 
@@ -43,14 +43,14 @@ person.showName.bind(animal);
 -call和apply改变了函数的上下文后便执行了该函数，bind则是返回了改变了上下文后的函数
 
 -求数组中的最大最小值
-```
+```javascript
 let arr = [1, 2, 3, 4, 5]
 Math.max.apply(Math, arr);
 Math.max.call(Math, 1, 2, 3, 4, 5);
 ```
 
 -将伪数组转化为数组
-```
+```javascript
 let arrayLike = {
   0: 'qinglong',
   1: 'ziqi',
@@ -59,7 +59,7 @@ let arrayLike = {
 }
 ```
 -上面是一个以数字为下标并有length属性的对象字面量，将它转换成一个数组
-```
+```javascript
 let arr = Array.prototype.slice.call(arrayLike);
 ```
 
@@ -75,7 +75,7 @@ let arr = Array.prototype.slice.call(arrayLike);
 ## 闭包
 - 从形式来说，闭包就是在函数里面定义一个函数
 - 从特点来说，子函数可以读写父函数的局部变量
-```
+```javascript
 fucntion parent() {
   var count = 0;
   return function children() {
@@ -90,7 +90,7 @@ children();   // 2
 ```
 - 如何辨别闭包
 1. 案例1
-```
+```javascript
 function f1() {
   var n = 999;
   nAdd = function() { n += 1;};
@@ -113,7 +113,7 @@ result.func();    // 1000
 ```
 
 2. 案例2
-```
+```javascript
 var tasks = [];
 
 for (var i = 0; i < 3; i++) {
@@ -140,7 +140,7 @@ tasks[1]();    // '>>> 1'
 ```
 
 3. 案例3
-```
+```javascript
 function fun(n, o) {
   console.log(0);
   return {
