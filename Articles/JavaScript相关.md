@@ -142,7 +142,113 @@ console.log(newObj.c, oldObj.c);    // {} /ab+c/i
 console.log(newObj.d.constructor, oldObj.d.constructor);  // [Function: Object] [Function: person]
 ```
 
-## 截流，防抖
+## 防抖，节流
+资料来源：https://github.com/mqyqingfeng/Blog/issues/22
+- 防抖（debounce): 在事件被触发n秒之后执行，如果在此期间在次触发事件，则重新开始计算
+
+- 首先，写一个index.html文件
+```javascript
+<!DOCTYPE html>
+<html lang="zh-cmn-Hans">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="IE=edge, chrome=1">
+    <title>debounce</title>
+    <style>
+        #container{
+            width: 100%; height: 200px; line-height: 200px; text-align: center; color: #fff; background-color: #444; font-size: 30px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="container"></div>
+    <script src="debounce.js"></script>
+</body>
+
+</html>
+
+```
+debounce.js文件的代码如下
+```javascript
+var count = 1;
+var container = document.getElementById("container");
+
+function getUserAction() {
+    container.innerHTML = count++;
+}
+
+container.onmousemove = getUserAction;
+```
+
+- 根据这一段表述，可以写第一版代码
+```javascript 
+// 第一版
+function debounce(func, wait) {
+    var timeout;
+    return function() {
+        clearTimeout(timeout);
+        timeout = setTimeout(func, wait);ß
+    }
+}
+```
+如果我们要使用它，以最开始的例子为例
+```javascript
+container.onmousemove = debounce(getUserAction, 1000);
+```
+现在随便怎么移动，只有移动完1000ms内不再触发，才执行事件
+
+- 第二版代码需要修正this的指向
+如果在getUserAction函数中console.log(this),在不实用debounce函数时，this的值为
+```javascript
+<div id="container"></div>
+```
+但是如果使用debounce函数，this就会指向Window对象
+所以需要修改this但指向
+```javascript
+// 第二版
+function debounce(func, wait) {
+    var timeout;
+
+    return function() {
+        var context = this；
+
+        clearTimeout(timeout);
+        timeout = setTimeout(function() {
+            func.apply(context)
+        }, wait);
+    }
+}
+```
+现在的this已经可以正确指向了
+
+- 第三版修改event事件对象
+```javascript
+function getUserAction(e) {
+    console.log(e);
+    container.innerHTML = count++;
+}
+```
+如果不使用debounce函数，这里会打印MouseEvent对象
+但在debounce函数中，只会打印undefined，需要修改
+
+```javascript
+// 第三版
+function debounce(func, wait) {
+    var timeout;
+
+    return function() {
+        var context = this;
+        var args = arguments;
+
+        clearTimeout(timeout);
+        timeout = setTimeout(function() {
+            func.apply(context, args);
+        }, wait);
+    }
+}
+```
 
 
 ## 函数柯里化
@@ -219,7 +325,7 @@ tasks[1]();    // '>>> 1'
 3. 案例3
 ```javascript
 function fun(n, o) {
-  console.log(0);
+  console.log(o);
   return {
     fun: function(m) { // 2
       return fun(m, n); // 1
@@ -243,7 +349,6 @@ c.fun(3);  // 1
 
 // 
 ```
-
 - 总结
 1. 闭包其实是在函数内部定义一个函数
 2. 闭包在使用的时候不会释放外部的引用，闭包函数内部的值会得到保留
@@ -374,8 +479,6 @@ this = GetBase(ref); // foo
 
 3. 在示例3，4，5中，因为有赋值操作符，逻辑与算法，逗号操作符，返回的不是Reference类型，this 为 undefined，所以结果都是1
 ps： 以上是在非严格模式下的结果，严格模式下因为this返回undefined
-
-
 
 
 ## 数据类型
