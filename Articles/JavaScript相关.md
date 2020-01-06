@@ -249,6 +249,66 @@ function debounce(func, wait) {
     }
 }
 ```
+- 第四版将方法改为支持立即执行
+考虑一个新的需求，就是：不希望非要等到事件停止触发之后草执行，为希望立刻执行，等到停止触发n秒之后，才可以重新触发执行，加个immediate参数判断是否立刻执行
+```javascript
+// 第四版
+function debounce(func, wait, immediate) {
+    var timeout;
+
+    return function() {
+        var context = this;
+        var args = arguments;
+
+        if (timeout) clearTimeout(timeout);
+        if (immediate) {
+            // 如果已经执行过，不再执行
+            var callNoe = !timeout;
+            timeout = setTimeout(function() {
+                timeout = null;
+            }, wait);
+            if (callNow) func.apply(context, args);
+        } else {
+            timeout = setTimeout(function() {
+                func.apply(context, args);
+            }, wait);
+        }
+    }
+}
+```
+- 第五版添加返回值
+此时需要注意一点，就是getUserAction函数可能是有返回值的，所以我们也要返回函数的执行结果，但是当immediate为false时，因为使用了setTimeout，我们将func.apply(context, args)的返回值付给变量， 最后在return的时候，值将会一直是undefined，所以我们只在immediate为true的时候返回函数的执行结果
+```javascript
+// 第五版
+function debounce(func, wait, immediate) {
+    var timeout, result;
+
+    return function() {
+        var context = this;
+        var args = arguments;
+
+        if (timeout) clearTimeout(timeout);
+        if (immediate) {
+            // 如果已经执行过，不再执行
+            var callNoe = !timeout;
+            timeout = setTimeout(function() {
+                timeout = null;
+            }, wait);
+            if (callNow) result = func.apply(context, args);
+        } else {
+            timeout = setTimeout(function() {
+                func.apply(context, args);
+            }, wait);
+        }
+        return result;
+    }
+}
+
+```
+
+
+资料来源：https://github.com/mqyqingfeng/Blog/issues/26
+- 节流（throttle）：如果你持续触发事件，每隔一段时间，只执行一次事件
 
 
 ## 函数柯里化
