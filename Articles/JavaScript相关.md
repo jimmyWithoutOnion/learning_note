@@ -310,10 +310,142 @@ function debounce(func, wait, immediate) {
 资料来源：https://github.com/mqyqingfeng/Blog/issues/26
 - 节流（throttle）：如果你持续触发事件，每隔一段时间，只执行一次事件
 
+根据首次是否执行以及结束后是否执行，效果有所不同，实现的方式也有所不同。
+我们用leading代表首次是否执行，trailing代表结束后是否在执行一次
+
+关于节流的实现，有两种主流实现方法，一种是用时间戳，一种是设置定时器
+
+1. 使用时间戳
+当触发事件时，取出当前的时间戳，然后减去之前的时间戳（最开始设置为0），如果大于设置的时间周期，就执行函数，然后更新时间戳为当前时间戳，如果小于，就不执行
+```javascript
+// 第一版
+function throttle(func, wait) {
+    var context, args;
+    var previous = 0;
+
+    return function() {
+        var now = +new Date();
+        context = this;
+        args = arguments;
+        if (now - previous > wait) {
+            func.apply(context, args);
+            previous = now;
+        }
+    }
+}
+
+container.onmousemove = throttle(getUserAction, 1000);
+```
+
+2. 使用定时器
+当触发事件的时候，我们设置一个定时器，再触发事件的时候，如果定时器存在，就不执行，等到定时器执行，清空定时器，并执行函数，这样可以设置下一个定时器
+```javascript
+// 第二版
+function throttle(func, wait) {
+    var timeout;
+    var previous = 0;
+
+    return function() {
+        context = this;
+        args = arguments;
+        if(!timeout) {
+            timeout = setTimeout(function() {
+                timeout = null;
+                func.apply(context, args)
+            }, wait)
+        }
+    }
+}
+```
+3. 比较两个方法
+第一种事件会立即执行，第二种事件会在n秒后第一次执行
+第一种事件停止触发后没有办法再执行事件，第二种事件停止触发后依然会在执行一次事件
+
+4. 优化
+有时希望无头有尾或者有头无尾，设置第三个参数options，根据传值来判断到底是什么效果
+ps：leading：false和trailing：false不能同时设置
+所以这个throttle只有三种用法：
+```javascript
+container.onmousemove = throttle(getUserAction, 1000);
+container.onmousemove = throttle(getUserAction, {
+    leading: false
+});
+container.onmousemove = throttle(getUserAction, {
+    trailing: false
+});
+```
 
 ## 函数柯里化
+资料来源：https://github.com/mqyqingfeng/Blog/issues/42
+- 定义
+在数学和计算机科学中，柯里化是一种将使用多个参数的一个函数转换成使用一个参数的函数的技术
+
+- 举个例子
+```javascript
+fucntion add(a, b) {
+    return a + b;
+}
+
+// 执行add函数，一次传入两个参数即可
+add(1, 2); // 3
+
+// 假设又一个curry函数可以做到柯里化
+var addCurry = curry(add);
+addCurry(1)(2); // 3
+```
+- 用途
+举个例子
+```javascript
+// 示意而已
+function ajax(type, url, data) {
+    var xhr = new XMLHttpRequest();
+    xhr.open(type, url, true);
+    xhr.send(data);
+}
+// 虽然ajax这个函数非常通用，但在重复调用的时候参数冗余
+ajax('POST', 'www.test.com', 'name=kevin');
+ajax('POST', 'www.test2.com', 'name=kevin');
+ajax('POST', 'www.test3.com', 'name=kevin');
+
+// 利用curry
+var ajaxCurry = curry(ajax);
+
+// 以POST类型请求数据
+var post = ajaxCurry('POST');
+post('www.test.com', 'name=kevin');
+
+// 以POST类型请求位于www.test.com的数据
+var postFromTest = post('www.test.com');
+postFromTest('name=kevin');
+```
+- curry的这种用途可以理解为：参数复用，本质上是降低通用性，提高适用性
+
+- 也可以用来把柯里化后的函数传给其他函数比如map
+比如有这样一段函数
+```javascript
+var person = [{name: 'kevin'}, {name:'kevin'}];
+```
+如果我们要获取所有的name值，可以这样做
+```javascript
+var name = person.map(function(item) {
+    return item.name;
+})
+```
+不过如果我们有curry函数
+```javascript
+var prop = curry(function(key, obj) {
+    return obj[key]
+});
+
+var name = person.map(prop('name'));
+```
+
 
 ## 事件捕获 冒泡 委托
+
+// todo
+
+
 
 ## 闭包
 - 从形式来说，闭包就是在函数里面定义一个函数
@@ -539,6 +671,8 @@ this = GetBase(ref); // foo
 
 3. 在示例3，4，5中，因为有赋值操作符，逻辑与算法，逗号操作符，返回的不是Reference类型，this 为 undefined，所以结果都是1
 ps： 以上是在非严格模式下的结果，严格模式下因为this返回undefined
+
+## 从原型到原型链
 
 
 ## 数据类型
