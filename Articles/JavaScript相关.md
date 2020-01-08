@@ -674,7 +674,309 @@ ps： 以上是在非严格模式下的结果，严格模式下因为this返回u
 
 ## 从原型到原型链
 
+## 继承
+
+
+
+
+
+
+
 
 ## 数据类型
+资料来源：https://juejin.im/post/5d030e03518825361817032f
+- JavaScript 中有七种内置的数据类型，包括基本类型和对象类型
+
+- 基本类型分为以下六种：
+1. string
+2. boolean
+3. number
+4. symbol
+5. null
+6. undefined
+
+- 注意：
+1. string，number，boolean，null 和 undefined 这五种类型统称为 原始类型 （Primitive），表示不能再细分下去的基本类型
+2. symbol 是ES6中新增的数据类型，symbol 表示独一无二的值，通过 symbol 函数调用生成，由于生成的 symbol 值为原始数据，所以 symbol 函数不能使用 new 调用
+3. null 和 undefined 通常被认为是特殊值，这两种类型的值唯一，就是其本身
+
+- 对象类型
+对象类型也叫引用类型， array 和 function 都是对象的子类型，对象在逻辑上是属性的无序集合，是存放各种值的容器，对象值储存用的是引用地址，所以和基本类型值不可变的特性不同，对象值是可变的
+
+- js弱类型语言
+1. js声明变量的时候并没有预先确定的类型，变量的类型就是其值的类型，也就是说变量当前的类型由其值决定，可能上一秒是 string ，下一秒就是 number 类型，这个过程可能就进行了某些操作发生了强制类型转换
+2. 虽然弱类型的这种不需要预先确定类型的特性给我们带来了便利，同时也会给我们带来困扰
+
+- js中强制转换规则
+1. ToPrimitive（转换为原始类型）
+* ToPrimitive 对原始类型不发生转换处理，只针对引用类型（Object）的，其目的是将引用类型转换为非对象类型，也就是原始类型
+* ToPrimitive 运算符接受一个值，和一个可选的期望类型做参数
+```javascript
+// obj 需要转换的对象
+// type 期望转换为的原始数据类型，可选
+
+ToPrimitive(obj, type)
+```
+* type不同值的说明
+· type 为 string
+    1. 先调用obj的toString方法，如为原始值，则return
+    2. 再调用obj的valueOf方法，如为原始值，则return
+    3. 抛出TypeError方法
+· type 为 number
+    1. 先调用obj的valueOf方法，如为原始值，则return
+    2. 再调用obj的toString方法，如为原始值，则return 
+    3. 抛出TypeError方法
+· type 为 空
+    1. 该对象为Date，则type被设置为 string
+    2. 否则，type 被设置为 number
+
+* ToPrimitive 总结
+ToPrimitive 转成何种原始类型取决于 type， 若指定，则按照指定类型转换，若不指定，默认根据使用情况分为两种情况，Date 为 string， 其余对象为 number 
+
+2. toString
+Object.prototype.toString()
+* toString() 方法返回一个表示该对象的字符串
+* 每个对象都有一个 toString() 方法， 当对象被表示为文本值或期望以字符串的方式引用对象时，该方法被调用
+* toString() 和 valueOf() 方法在特定场合下会自行调用
+
+3. valueOf
+Object.prototype.valueOf()
+* 方法返回指定对象的原始值
+* js调用 valueOf() 方法来把对象转换成原始类型的值，一般会被js自行调用
+
+4. Number
+* null 转换为0
+* undefined 转换为 NaN
+* true 转换为1， false 转换为0
+* 字符串转换时遵循数字常量规则，转换失败返回NaN
+
+5. String
+* null 转换为 'null'
+* undefined 转换为 'undefined'
+* true 转换为 'true', false 转换为'false'
+* 数字转换遵循通用规则，极大极小的数字使用指数形式
+```javascript
+String(null)                 // 'null'
+String(undefined)            // 'undefined'
+String(true)                 // 'true'
+String(1)                    // '1'
+String(-1)                   // '-1'
+String(0)                    // '0'
+String(-0)                   // '0'
+String(Math.pow(1000,10))    // '1e+30'
+String(Infinity)             // 'Infinity'
+String(-Infinity)            // '-Infinity'
+String({})                   // '[object Object]'
+String([1,[2,3]])            // '1,2,3'
+String(['koala',1])          //koala,1
+
+```
+
+6. Boolean
+* 除了以下六个值转换为 false，其余全部为 true：
+undefined
+null
+-0
+0 或 +0
+NaN
+‘’（空字符串）
+
+假值以外的值都是真值，所有对象的转换结果都是 true ，甚至连 false 对应的布尔对象也是 true
+```javascript
+
+Boolean(undefined) // false
+Boolean(null) // false
+Boolean(0) // false
+Boolean(NaN) // false
+Boolean('') // false
+
+Boolean({}) // true
+Boolean([]) // true
+Boolean(new Boolean(false)) // true
+
+```
+
+- 什么时候自动转换为 string 类型
+* 在没有对对象的前提下
+字符串的自动转换，主要发生在字符串的加法运算时，当一个值为字符串，另一个值为非字符串，则后者转为字符串
+
+```javascript
+'2' + 1 // '21'
+'2' + true // "2true"
+'2' + false // "2false"
+'2' + undefined // "2undefined"
+'2' + null // "2null"
+```
+
+* 当有对象且与对象 + 时
+
+```javascript
+//toString的对象
+var obj2 = {
+    toString:function(){
+        return 'a'
+    }
+}
+console.log('2'+obj2)
+//输出结果2a
+
+//常规对象
+var obj1 = {
+   a:1,
+   b:2
+}
+console.log('2'+obj1)；
+//输出结果 2[object Object]
+
+//几种特殊对象
+'2' + {} // "2[object Object]"
+'2' + [] // "2"
+'2' + function (){} // "2function (){}"
+'2' + ['koala',1] // 2koala,1
+
+```
+
+- 什么时候自动转换为Number类型
+* 有 + 运算符，但没有 string 类型但时候，会优先转换为 Number 类型
+```javascript
+true + 0 // 1
+true + true // 2
+true + false //1
+
+```
+
+* 除了加法运算符，其他运算符都会把运算自动转成数值
+```javascript
+
+'5' - '2' // 3
+'5' * '2' // 10
+true - 1  // 0
+false - 1 // -1
+'1' - 1   // 0
+'5' * []    // 0
+false / '5' // 0
+'abc' - 1   // NaN
+null + 1 // 1
+undefined + 1 // NaN
+
+//一元运算符（注意点）
++'abc' // NaN
+-'abc' // NaN
++true // 1
+-false // 0
+
+```
+注意：null 转为数值时为 0 ，undefined转为数值时为 NaN
+
+* 判断等号的特殊说明
+不再是 string 优先，而是 number 优先，列举 x == y 的例子
+
+* 如果 x，y 均为 number， 直接比较
+* 如果存在对象，ToPrimitive() type 为 number 进行转换
+```javascript
+var obj1 = {
+    valueOf:function(){
+        return '1'
+    }
+}
+1 == obj1  //true
+//obj1转为原始值，调用obj1.valueOf()
+//返回原始值'1'
+//'1'toNumber得到 1 然后比较 1 == 1
+[] == ![] //true
+//[]作为对象ToPrimitive得到 ''  
+//![]作为boolean转换得到0 
+//'' == 0 
+//转换为 0==0 //true
+
+```
+* 如果存在 boolean ，转换为1或者0，再进行比较
+
+* 如果 x 为 string，y 为 number ，转成 number 进行比较
+```javascript
+//'0' toNumber()得到 0  
+//0 == 0 true
+'0' == 0 //true
+
+```
+
+- 什么时候进行布尔转换
+* 布尔比较
+* if ， while 等判断或者 ？ 的三元判断符
+```javascript
+// 条件部分的每个值都相当于 false，使用否定运算符后，就变成了 true
+if ( !undefined
+  && !null
+  && !0
+  && !NaN
+  && !''
+) {
+  console.log('true');
+} // true
+
+//下面两种情况也会转成布尔类型
+expression ? true : false
+!! expression
+
+```
+
+- js中的数据类型判断
+1. typeof
+```javascript
+typeof 'seymoe'    // 'string'
+typeof true        // 'boolean'
+typeof 10          // 'number'
+typeof Symbol()    // 'symbol'
+typeof null        // 'object' 无法判定是否为 null
+typeof undefined   // 'undefined'
+
+typeof {}           // 'object'
+typeof []           // 'object'
+typeof(() => {})    // 'function'
+
+```
+* 数组，对象，null 都显示为 object
+
+2. instanceof
+通过 indtanceof 操作符也可以对对象类型进行判断，其原理是测试构造函数的 prototype 是否出现在被检测对象的原型链上
+```javascript
+[] instanceof Array            // true
+({}) instanceof Object         // true
+(()=>{}) instanceof Function   // true
+
+```
+
+但 instanceof 也不是万能但
+```javascript
+let arr = []
+let obj = {}
+arr instanceof Array    // true
+arr instanceof Object   // true
+obj instanceof Object   // true
+
+```
+
+3. Object.prototype.toString()
+* 可以说是判定js中数据类型但终极方法了
+```javascript
+Object.prototype.toString.call({})              // '[object Object]'
+Object.prototype.toString.call([])              // '[object Array]'
+Object.prototype.toString.call(() => {})        // '[object Function]'
+Object.prototype.toString.call('seymoe')        // '[object String]'
+Object.prototype.toString.call(1)               // '[object Number]'
+Object.prototype.toString.call(true)            // '[object Boolean]'
+Object.prototype.toString.call(Symbol())        // '[object Symbol]'
+Object.prototype.toString.call(null)            // '[object Null]'
+Object.prototype.toString.call(undefined)       // '[object Undefined]'
+
+Object.prototype.toString.call(new Date())      // '[object Date]'
+Object.prototype.toString.call(Math)            // '[object Math]'
+Object.prototype.toString.call(new Set())       // '[object Set]'
+Object.prototype.toString.call(new WeakSet())   // '[object WeakSet]'
+Object.prototype.toString.call(new Map())       // '[object Map]'
+Object.prototype.toString.call(new WeakMap())   // '[object WeakMap]'
+
+```
+
 
 
