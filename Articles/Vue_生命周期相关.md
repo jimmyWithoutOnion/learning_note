@@ -1,4 +1,7 @@
 # Vue生命周期
+资料来源：https://juejin.im/post/5c408be9f265da614f709043；
+https://juejin.im/post/5afd7eb16fb9a07ac5605bb3
+
 ## beforeCreate
 - 生成 $option 选项，并给实例添加生命周期相关属性
 - 在实例初始化之后，在数据观测（data observer）和 event/watcher 事件配置之前被调用，也就是说，data，watcher，methods都不存在这个阶段
@@ -8,6 +11,9 @@
 - 初始化与依赖注入相关的操作，会遍历传入 methods 的选项，初始化选项数据，从 $options 获取数据选项（vm.$options.data），给数据添加‘观察器’对象并创建观察器，定义getter，setter存储器属性
 - 在实例创建之后被调用，该阶段可以访问data，使用watcher，events，methods
 - 此时dom还没有被挂载，该阶段允许执行http请求操作
+
+- 渲染优先级 render 函数 > template 属性 > 外部 html
+
 
 ## beforeMount
 - 相关 render 函数首次被调用
@@ -29,3 +35,11 @@
 ## destroyed
 - 实例被销毁后调用，所有事件监听器已被移除，子实例被销毁
 
+- 虚拟dom开始渲染是在 beforeMount 时，dom实例挂载完成在 mounted 阶段显示
+
+## 异步加载
+- setTimeout 等异步函数
+
+
+
+- ajax 异步请求

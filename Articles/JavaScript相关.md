@@ -443,7 +443,10 @@ var name = person.map(prop('name'));
 
 ## 事件捕获 冒泡 委托
 
-// todo
+
+
+
+
 
 
 
@@ -673,6 +676,14 @@ this = GetBase(ref); // foo
 ps： 以上是在非严格模式下的结果，严格模式下因为this返回undefined
 
 ## 从原型到原型链
+
+
+
+
+
+
+
+
 
 ## 继承
 
