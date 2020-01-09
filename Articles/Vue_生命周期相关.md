@@ -1,6 +1,7 @@
 # Vue生命周期
 资料来源：https://juejin.im/post/5c408be9f265da614f709043；
-https://juejin.im/post/5afd7eb16fb9a07ac5605bb3
+https://juejin.im/post/5afd7eb16fb9a07ac5605bb3；
+https://juejin.im/post/5afd7eb16fb9a07ac5605bb3#heading-1
 
 ## beforeCreate
 - 生成 $option 选项，并给实例添加生命周期相关属性
@@ -26,6 +27,8 @@ https://juejin.im/post/5afd7eb16fb9a07ac5605bb3
 - $vm.data 更新之后，虚拟dom重新渲染之前被调用
 - 这个钩子可以修改 $vm.data ，并不会触发附加的重渲染过程
 
+- 这个数据只有和模版中的数据绑定了才会发生更新
+
 ## updated
 虚拟 dom 重新渲染之后调用，若再次修改 $vm.data ,会再次触发 beforeUpdate、updated， 进入死循环 
 
@@ -37,9 +40,15 @@ https://juejin.im/post/5afd7eb16fb9a07ac5605bb3
 
 - 虚拟dom开始渲染是在 beforeMount 时，dom实例挂载完成在 mounted 阶段显示
 
+## 几个不常用的生命钩子
+- activated： 当组件激活时调用
+- deactivated： 当组件停用时调用
+- errorCaptured： 当捕获一个来自子孙组件的错误时被调用
+
 ## 异步加载
 - setTimeout 等异步函数
-
-
+异步函数会等到所有同步函数执行完之后再执行
 
 - ajax 异步请求
+1. 给予赋值变量初值
+2. v-if，仅当有返回值时，才开始渲染节点

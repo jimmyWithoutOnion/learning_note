@@ -1,4 +1,5 @@
 # http 相关
+资料来源： https://juejin.im/post/5d032b77e51d45777a126183
 ## http有哪些方法
 http1.0有三种请求方法：GET，POST，HEAD
 http2.0新增来物种请求方法：OPTIONS，PUT，DELETE，TRACE，CONNECT

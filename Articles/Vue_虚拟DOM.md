@@ -1,4 +1,5 @@
 # vue 虚拟DOM
+资料来源： https://juejin.im/post/5d36cc575188257aea108a74#heading-5
 ## 真实DOM和其解析流程
 - 下图为webkit渲染引擎工作流程图
 ![a0696301.png](:storage/eb6912af-aa78-403d-b253-2e9d828a9b8c/a0696301.png)

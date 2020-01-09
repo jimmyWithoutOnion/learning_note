@@ -1,4 +1,5 @@
 # event bus相关
+资料来源：https://juejin.im/post/5ac2fb886fb9a028b86e328c
 ## 基本构造
 - 初始化class
 ```javascript

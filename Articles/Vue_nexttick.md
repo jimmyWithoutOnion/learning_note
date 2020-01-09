@@ -1,4 +1,5 @@
 # Nexttick
+资料来源： https://juejin.im/post/5b067e66f265da0de45237cd
 ## nexttick
 - 在vue中，数据监测是通过Object.defineProperty来重写里面的set和get方法来实现的，vue更新DOM是异步的，每当观测到数据变化时，vue就开始一个队列，将同一时间循环内非所有数据变化缓存起来，等到下一次event loop，会将队列清空，进行DOM更新，内部使用microtask，MutationObserver来实现
 
