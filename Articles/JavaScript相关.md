@@ -675,20 +675,147 @@ this = GetBase(ref); // foo
 ps： 以上是在非严格模式下的结果，严格模式下因为this返回undefined
 
 ## 从原型到原型链
+资料来源：https://juejin.im/post/58f94c9bb123db411953691b#heading-5
+- 构造函数，原型和实例的关系
+
+每个构造函数（constructor）都有一个原型对象（prototype），原型对象都包含一个指向构造函数的指针，而实例（instance）都包含一个指向原型对象的内部指针
+
+如果试图引用对象（实例 instance）的某个属性，会首先在对象内部寻找该属性，直至找不到，然后才在该对象的原型（instance.prototype）里去找这个属性
+
+```javascript
+function Father() {
+    this.property = true;
+}
+
+Father.prototype.getFatherValue = function() {
+    return this.property;
+}
+
+function Son() {
+    this.sonProperty = false;
+}
+
+Son.prototype = new Father(); // Son.prototype被重写，导致Son.prototype.constructor也一同被重写
+Son.prototype.getSonValue = function() {
+    return this.sonProperty;
+}
+
+var instance = new Son();
+alert(instance.getFatherValue()); // true
+```
 
 
 
+- 确定原型和实例的关系
 
+使用原型链后，怎么去判断原型和实例的继承关系，方法一般有两种
+1. 使用 instance 操作符，只要用这个操作符来测试实例（instance）与原型链中出现过的构造函数，结果就会返回true
+```javascript
+alert(instance instanceof Object); // true
+alert(instance instanceof Father); // true
+alert(instance instanceof Son); // true
+```
 
+2. 第二种时使用 isPrototypeOf（）方法，同样只要是原型链中出现过的原型，方法就会返回true
+```javascript
+alert(Object.prototype.isPrototype(instance)); // true
+alert(Father.prototype.isPrototype(instance)); // true
+alert(Son.prototype.isPrototype(instance)); // true
+```
 
+- 原型链的问题
+1. 当原型链中包含引用类型值的原型时，该引用类型值会被所有实例共享
+2. 在创建子类型（例如创建Son实例）时，不能向超类型（例如Father）的构造函数中传递参数
 
+- 所以在实践中很少单独使用原型链
+1. 借用构造函数
+为解决原型链中上述的两个问题，我们开始使用一种叫做 借用构造函数（constructor stealing）的技术
+基本思想：在子类型构造函数的内部调用超类型构造函数
 
+```javascript 
+function Father() {
+    this.colors = ['red', 'blue', 'green'];
+}
 
-## 继承
+function Son() {
+    Father.call(this); // 继承了Father，且向父类型传递参数
+}
 
+var instance1 = new Son();
+instance1.colors.push('black');
+console.log(instance1.colors); // 'red,blue,green,black'
 
+var instance2 = new Son();
+console.log(instance2.colors); // 'red,blue,green'
+```
 
+借用构造函数解决了原型链的两大问题
+其一，保证了原型链中引用类型值的独立，不再被所有实例共享
+其二，子类型创建时也能够向父类型传递参数
 
+但是，方法都在构造函数中定义，因此函数复用就不行了，超类型中定义的方法对子类也是不可见的，所以借用构造函数的方法很少单独使用
+
+2. 组合继承
+组合继承也叫伪经典继承
+基本思路：使用原型链实现对原型属性和方法对继承，通过借用构造函数来实现对实例属性对继承
+```javascript
+function Father(name) {
+    this.name = name;
+    this.colors = ['red', 'blue', 'green'];
+}
+
+Father.prototype.sayName = function() {
+    alert(this.name);
+};
+
+function Son(name, age) {
+    Father.call(this, name); // 继承实例属性，第一次调用Father
+    this.age = age;
+}
+
+Son.prototype = new Father(); // 继承父类方法，第二次调用Father
+Son.prototype.sayAge = function() {
+    alert(this.age);
+};
+
+var instance1 = new Son("louis",5);
+instance1.colors.push("black");
+console.log(instance1.colors);//"red,blue,green,black"
+instance1.sayName();//louis
+instance1.sayAge();//5
+
+var instance1 = new Son("zhai",10);
+console.log(instance1.colors);//"red,blue,green"
+instance1.sayName();//zhai
+instance1.sayAge();//10
+```
+
+组合继承避免了原型链和借用构造函数的缺陷，融合了他们的优点，成为js中最常用的继承模式，而且 instanceof 和 isPrototypeOf 也能用于识别基于组合继承创建的对象
+
+3. 原型继承
+在object（）函数内部，先创建一个临时性的构造函数，然后将传入的对象作为这个构造函数的原型，最后返回这个临时类型的一个新实例
+
+```javascript
+function object(o) {
+    function F() {};
+    F.prototype = 0;
+    return new F();
+}
+```
+从本质上讲，object（）对传入其中对对象执行了一次浅复制
+
+4. 寄生式继承
+```javascript
+function createAnother(original) {
+    var clone = Object.create(original);
+    clone.sayHi = function() {
+        alert('hi');
+    };
+    return clone;
+}
+```
+
+5. 寄生组合式继承
 
 
 
