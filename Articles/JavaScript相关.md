@@ -816,7 +816,36 @@ function createAnother(original) {
 ```
 
 5. 寄生组合式继承
+```javascript
+function inheritPrototype(subType, superType) {
+    var prototype = Object.create(superType.prototype); // 创建对象
+    prototype.constructor = subType; // 增强对象
+    subType.prototype = prototype; // 指定对象
+}
 
+function SuperType(name) {
+    this.name = name;
+    this.colors = ['red', 'blue', 'green'];
+}
+
+SuperType.prototype.sayName = function() {
+    alert(this.name);
+}
+
+function SubType(name, age) {
+    SuperType.call(this, name);
+
+    this.age = age;
+}
+
+inheritPrototype(SubType, SuperType);
+
+SubType.prototype.sayAge = function() {
+    alert(this.age);
+}
+
+```
+这个例子只调用了一次SuperType构造函数，因此避免了在SubType.prototype 上面创建不必要的多余的属性，还能正常使用 instanceof 和 isPrototypeOf
 
 
 
@@ -1114,6 +1143,71 @@ Object.prototype.toString.call(new Map())       // '[object Map]'
 Object.prototype.toString.call(new WeakMap())   // '[object WeakMap]'
 
 ```
+## 变量提升
+资料来源：https://liaokeyu.com/%E6%8A%80%E6%9C%AF/2016/10/18/javascript_hoisting_%E5%8F%98%E9%87%8F%E6%8F%90%E5%8D%87.html
+- 函数和变量的声明总是会被解析器悄悄提升到方法体的最顶部
+```javascript
+(function() {
+    console.log(foo);
+    var foo = 'Javascript';
+})();
 
+```
+控制台输出：undefined
+js是函数作用域，解析器会在函数开头处自动去声明局部变量，局部变量都会被放在函数入口处定义，实际会被解释成
+```javascript
+(function() {
+    var foo;
+    console.log(foo);
+    foo = 'Javascript';
+})();
 
+```
+
+- 需要注意js中函数的两种声明方式
+1. function fn() {} // 函数声明式
+2. var fn = function() {} // 函数表达式
+
+- 对于函数声明式，解析器会确保在所有代码执行前已经被解析了，而对于函数表达式，与定义其他基本类型变量一样，逐句执行并解析
+```javascript
+(function() {
+    fn();
+    function fn() {
+        console.log('函数声明式');
+    }
+})();
+
+(function() {
+    fn();
+    var fn = function() {
+        console.log('函数表达式');
+    }
+})();
+```
+控制台依次输出
+函数声明式
+fn is not a function
+
+所以在js中，变量的声明会被提升，变量的赋值则不会。使用函数声明式时，函数体也会被一起提升
+
+## 执行上下文
+资料来源：https://juejin.im/post/5ba32171f265da0ab719a6d7
+- 什么是执行上下文
+
+执行上下文是评估和执行js代码的环境的抽象概念，每当js代码在运行的时候，它都是在执行上下文中运行
+
+- 执行上下文的类型
+1. 全局执行上下文：这是默认或者说基础的上下文，任何不再函数内部的代码都在全局上下文中。它会执行两件事：创建一个全局的 window 对象，并且设置 this 的值等于这个全局对象。一个程序中只会有一个全局执行上下文
+
+2. 函数执行上下文：每当一个函数被调用时，都会为该函数创建一个新的上下文，每个函数都有自己的执行上下文，不过是在函数被调用时创建。
+
+3. eval函数执行上下文：执行在eval函数内部的代码也会有属于它自己的执行上下文
+
+- 怎么创建执行上下文
+创建分为两个阶段：1.创建阶段 和 2.执行阶段
+
+- 创建阶段
+1. this 值的决定，即我们所熟知的 this 绑定
+2. 创建 词法环境 组件
+3. 创建 变量环境 组件
 
