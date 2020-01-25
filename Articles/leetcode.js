@@ -15,19 +15,19 @@ var twoSum = function (nums, target) {
 }
 
 // 8. 字符串转换整数
-var myAtoi = function (str) {
-    str.trim();
-    if (typeof str[0] != "number" || str[0] !== "-") {
-        return 0
-    }
-    for (let i = 0; i < str.length; i++) {
-        if (typeof str[i] == "number") {
+// var myAtoi = function (str) {
+//     str.trim();
+//     if (typeof str[0] != "number" || str[0] !== "-") {
+//         return 0
+//     }
+//     for (let i = 0; i < str.length; i++) {
+//         if (typeof str[i] == "number") {
 
-        }
-    }
-};
+//         }
+//     }
+// };
 
-// 20. 
+// 20. 有效括号
 var isValid = function (s) {
     if (s.length % 2 != 0) {
         return false;
@@ -75,21 +75,29 @@ var lengthOfLastWord = function (s) {
 };
 
 // 105 从前序和中序遍历序列构造二叉树
+var buildTree = function (preorder, inorder) {
 
-
-
-// 217 存在重复元素
-var containsDuplicate = function (nums) {
-    let bracket = {}
-    for (let i = 0; i < nums.length; i++) {
-        if (bracket[nums[i]]) {
-
-            return true
-        } else {
-            bracket[nums[i]] = 1
-        }
+    // 结束条件
+    if (inorder.length == 0) {
+        return null
     }
-    return false
+    // if (inorder.length == 1) {
+    //     let parent = new TreeNode(inorder[0])
+    //     return parent
+    // }
+
+    // 递归部分
+    let rootNodeVal = preorder[0]
+    let midIndex = inorder.indexOf(rootNodeVal)
+
+    let leftChildNode = buildTree(preorder.slice(1, midIndex + 1), inorder.slice(0, midIndex))
+    let rightChildNode = buildTree(preorder.slice(midIndex + 1), inorder.slice(midIndex + 1))
+
+    // 拼装tree node 返回
+    let rootNode = new TreeNode(rootNodeVal)
+    rootNode.left = leftChildNode
+    rootNode.right = rightChildNode
+    return rootNode
 };
 
 // 206 反转链表
@@ -105,6 +113,49 @@ var reverseList = function (head) {
     }
     return pre
 };
+
+// 217 存在重复元素
+var containsDuplicate = function (nums) {
+    let bracket = {}
+    for (let i = 0; i < nums.length; i++) {
+        if (bracket[nums[i]]) {
+
+            return true
+        } else {
+            bracket[nums[i]] = 1
+        }
+    }
+    return false
+};
+
+// 232 用栈实现队列
+// class MyQueue:
+
+// def __init__(self):
+// self.inStack = []
+// self.outStack = []
+
+
+// def push(self, x: int) -> None:
+// self.inStack.append(x)
+
+
+// def pop(self) -> int:
+// if len(self.outStack) == 0:
+//     while len(self.inStack) > 0:
+//         self.outStack.append(self.inStack.pop())
+// return self.outStack.pop()
+
+
+// def peek(self) -> int:
+// if len(self.outStack) == 0:
+//     while len(self.inStack) > 0:
+//         self.outStack.append(self.inStack.pop())
+// return self.outStack[-1]
+
+
+// def empty(self) -> bool:
+// return len(self.inStack) == 0 and len(self.outStack) == 0
 
 // 240 搜索二维矩阵2
 var searchMatrix = function (matrix, target) {
@@ -123,6 +174,46 @@ var searchMatrix = function (matrix, target) {
         }
     }
     return false
+};
+
+// 509 斐波那切数
+var fib = function (N) {
+    // 1. 递归
+    // if (N === 0) {
+    //     return 0
+    // }
+    // if (N === 1) {
+    //     return 1
+    // }
+    // return fib(N - 1) + fib(N - 2)
+
+    // 2. 
+    let fibList = [0, 1]
+
+    for (let i = 0; i < N - 1; i++) {
+        fibList[2 + i] = fibList[0 + i] + fibList[1 + i]
+    }
+    return fibList[N]
+};
+
+// 704 二分查找
+var search = function (nums, target) {
+    let head = 0
+    let end = nums.length - 1
+
+    while (head <= end) {
+        let mid = parseInt(head + (end - head) / 2)
+
+        if (nums[mid] > target) {
+            end = mid - 1
+        } else if (nums[mid] < target) {
+            head = mid + 1
+        } else {
+            return mid
+        }
+    }
+    return -1
+
 };
 
 
