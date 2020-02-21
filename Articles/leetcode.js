@@ -100,6 +100,29 @@ var buildTree = function (preorder, inorder) {
     return rootNode
 };
 
+
+
+
+// 105 寻找旋转排序数组中的最小值
+
+var findMin = function (nums) {
+    let head = 0
+    let end = nums.length - 1
+
+    while (head <= end) {
+        let mid = parseInt(head + (end - head) / 2)
+
+        if (nums[mid] < nums[head]) {
+            end = mid - 1
+        } else if (nums[mid] > nums[head]) {
+            head = mid + 1
+        } else {
+            return mid
+        }
+    }
+    return -1
+};
+
 // 206 反转链表
 var reverseList = function (head) {
 
