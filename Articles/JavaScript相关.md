@@ -190,7 +190,7 @@ function debounce(func, wait) {
     var timeout;
     return function() {
         clearTimeout(timeout);
-        timeout = setTimeout(func, wait);ß
+        timeout = setTimeout(func, wait);
     }
 }
 ```
