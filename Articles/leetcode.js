@@ -238,7 +238,27 @@ var search = function (nums, target) {
     return -1
 };
 
-
+// 1109 航班预定统计
+var corpFlightBookings = function (bookings, n) {
+    let bookingArray = []
+    for (let i = 0, len = n; i < n + 2; i++) {
+        bookingArray[i] = 0
+    }
+    for (let i = 0, len = bookings.length; i < len; i++) {
+        let start = bookings[i][0]
+        let end = bookings[i][1] + 1
+        bookingArray[start] += bookings[i][2]
+        bookingArray[end] -= bookings[i][2]
+    }
+    let resultArray = bookingArray.slice(1)
+    // console.log(resultArray)
+    for (let i = 0, len = resultArray.length; i < len; i++) {
+        if (resultArray[i - 1]) {
+            resultArray[i] += resultArray[i - 1]
+        }
+    }
+    return resultArray.slice(0, resultArray.length - 1)
+};
 
 
 
