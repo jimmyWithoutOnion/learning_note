@@ -1,91 +1,97 @@
-资料来源：http://es6.ruanyifeng.com/#docs/destructuring
-# 表达式
-## 声明
-- const 命令：声明变量
-- let 命令：声明变量
+资料来源：
+1. https://github.com/mqyqingfeng/Blog
+2. https://juejin.im/post/5c6234f16fb9a049a81fcca5
+3. https://juejin.im/post/5bfe05505188252098022400
 
-- 作用域
-1. 全局作用域
-2. 函数作用域：function() {}
-3. 块级作用域：{}
-
-- 作用范围
-1. var 命令 在全局代码中执行
-2. const 命令 和 let 命令 只能在代码块中执行
-
-- 赋值使用
-1. const 命令 声明常量之后必须立马赋值
-2. let 命令 声明变量后可立马赋值或使用时赋值
-
-- 声明方法： var, const, let, function, class, import
-
-- 重点难点
-1. 不允许重复声明
-2. 未定义就使用会报错：const 命令 和 let 命令 不存在变量提升
-3. 暂时性死区：在代码块内使用 let 命令 声明变量之前，该变量都不可用
-4. const 保证的并不是值不得改动，而是变量指向的那个内存地址所保存的数据不得改动
-对于简单类型的数据，值就保存在变量指向的内存地址
-但对于复合类型但数据，保存的只是指向实际数据的指针，const只能保证指针固定，至于它指向的数据结构是不是可变的，就完全不能控制了
+# let 和 const
+## 块级作用域的出现
+---
+通过 var 声明的变量存在变量提升的特性：
 ```javascript
-const foo = {};
-
-// 为 foo 添加一个属性，可以成功
-foo.prop = 123;
-foo.prop // 123
-
-// 将 foo 指向另一个对象，就会报错
-foo = {}; // TypeError: "foo" is read-only Assignment to constant variable.
-
-const a = [];
-a.push('Hello'); // 可执行
-a.length = 0;    // 可执行
-a = ['Dave'];    // 报错
+if (condition) {
+    var value = 1;
+}
+console.log(value);
 ```
-5. 顶层对象
-ES5 之中，顶层对象的属性与全局变量是等价的，这样的设计有很大的问题
--首先是没法在编译时就报出变量未声明的错误
--其次，很容易不知不觉就创建了全局变量
--不利于模块化编程
-
-
-## 解构赋值
-- 字符串解构： 
-``` javascript
-const [a, b, c, d, e] = 'hello'
+因为变量提升的原因，代码相当于
+```javascript
+var value;
+if (condition) {
+    value = 1;
+}
+console.log(value);
 ```
-类似数组的对象都有一个 length 属性，因此还可以对这个属性解构赋值
-``` javascript
-let { length: len } = 'hello'
-console.log(len) // 5
+如果 condition 为 false，打印的结果是 undefined
+
+除此之外，在 for 循环中，即使循环已经结束了，依然可以访问到 i 的值
+```javascript
+for (var i = 0; i < 10; i++) {
+    ...
+}
+console.log(i); // 10
 ```
 
-- 数值和布尔值解构：
-解构赋值时，如果等号右边是数值和布尔值，则会先转为对象
+**为了加强对变量生命周期的控制，es6引入了块级作用域**
 
-``` javascript
-const { toString: s } = 123
-s === Number.prototype.toString // true
-
-
-const { toString: s } = true
-s === Boolean.prototype.toString // true
+## let 和 const
+---
+let 和 const 都是块级声明的一种，有以下特点
+1. 不会被提升
+```javascript
+if (false) {
+    let value = 1;
+}
+console.log(value); // Uncaught ReferenceError: value is not defined
 ```
-上面代码中，数值和布尔值对包装对象都有 toString 属性，因此变量s都能取到值
-解构赋值的规则是，只要等号右边的值不是对象或数组，就先将其转化为对象，由于 undefined 和 null 无法转化为对象，所以对他们进行解构赋值，都会报错
 
-- 对象解构
+2. 重复声明会报错
+```javascript
+var value = 1;
+let value = 2; // Uncaught SyntaxError: Identifier 'value' has already been declared
+```
+只有var ，let， const 声明同一个变量名会报错
+
+3. 不绑定全局作用域
+当在全局作用域中使用 var 声明变量时，会创建一个新的全局变量作为全局对象的属性：
+```javascript
+var value = 1;
+console.log(window.value); // 1
+```
+然而 let 和 const 不会
+```javascript
+let value = 1;
+console.log(window.value); // undefined
+```
+
+let 和 const 的区别：
+const 用于声明常量，值一旦被设定不能被修改，否则会报错
+**值得一提的是： const声明对象时不允许修改绑定，但可以修改值**
+```javascript
+const data = {
+    value: 1
+}
+
+// 没有问题
+data.value = 2;
+data.num = 1;
+
+// 报错
+data = {}; // Uncaught TypeError: Assignment to constant variable.
+```
+
+## 临时死区
+---
+临时死区（Temporal Dead Zone）
+let 和 const 声明但变量不会被提升到作用域顶部，如果在声明之前访问这些变量会导致报错：
+
+```javascript
+console.log(typeof value); // Uncaught ReferenceError: value is not defined
+let value = 1;
+```
 
 
 
 
 
 
-# 内置对象
 
-
-
-# 语句与运算
-
-
-
-# 异步编程
