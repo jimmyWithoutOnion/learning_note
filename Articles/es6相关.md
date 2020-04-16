@@ -200,16 +200,161 @@ console.log(a[mySymbol]); // "Hello!"
 ```
 ...
 
-# 解构赋值
-
-# 剩余运算符
-
 # Promise
+---
+众所周知，js是单线程的，因为多个线程改变DOM的话会导致页面混乱，所以设计为一个单线程的语言，但浏览器是多线程的，这使得js同时具备异步的操作，即定时器，请求，事件监听等
+
+使用回调函数处理异步请求相当于把你的回调函数置于一个黑盒，虽然你声明了等收到相应后执行你提供的相应函数，可你并不知道这个第三方库会在何时以什么方式执行回调函数
+
+第二个众所周知的问题是，回调函数中嵌套回调函数会导致代码非常难以维护，就是人们常说的回调地狱
+
+### 总结一下回调函数的缺点，以及 Promise 解决的方法
+1. 多重嵌套，回调地狱
+- Promise 在设计的时候引入了链式调用的方法，**每一个 then 方法同样也是一个 Promise**，因此可以一直链式调用下去
+
+```javascript
+
+axios.get('http://localhost:3000')
+  .then(res => axios.get('http://localhost:3001'))
+  .then(res => axios.get('http://localhost:3002'))
+  .then(res => axios.get('http://localhost:3003'))
+```
+
+2. 代码跳跃，并非人类习惯的思维模式
+3. 信任问题，第三方库可能多次执行
+- Promsie 本身是一个状态机，共有三种状态
+    Pending
+    fullfilled
+    rejected
+
+4. 第三方库可能没有提供错误处理
+5. 不清楚回调是不是都是异步执行
+
+### 含义
+- Promise 对象主要有两个特点：
+1. 对象的状态不受外界影响
+2. 状态一旦改变，就不会再变了，会一直保持这个结果
+
+- Promise 的缺点：
+1. 无法取消 Promise，一旦新建就会立即执行
+2. 如果不设置回调函数，Promise 内部抛出的错误不会反应到外部
+
+- Promise.all()
+```javascript
+const p = Promise.all([p1, p2, p3]);
+```
+p 的状态由 p1，p2，p3 决定：
+1. p1，p2，p3 的状态都变成 fullfilled，p 会变成 fullfilled，p1，p2，p3 的返回值组成一个数组，传递给 p 的回调函数
+2. 只要 p1，p2，p3 之中有一个被 rejected，p 的状态就变成 rejected，此时第一个被 reject 的实例的返回值，会传递给 p 的回调函数
+
+- Promise.rase()
+只要有一个改变状态，p 就改变状态并将返回值传递给 p 的返回函数
 
 # Async
+---
+在异步处理上，async 函数就是 generator 的语法糖
+其实 async 函数的实现原理，就是将 generator 函数和自动执行器，包装在一个函数里
+
+### Async 和 Promise
+严谨的说，async 是一种语法，Promise 是一个内置对象，两者并不具备可比性，何况 async 函数返回的是一个 Promise 对象
+
+这里主要展示一些场景，使用 async 会比 Promise 更优雅地处理异步流程
+
+1. 代码更简洁
+```javascript
+// 示例一
+function fetch() {
+  return (
+    fetchData()
+    .then(() => {
+      return 'Done'
+    })
+  )
+}
+
+// 改进
+async function fetch() {
+  await fetchData();
+  return 'Done'
+}
+
+// 示例二
+function fetch() {
+  return (
+    fetchData()
+    .then(value1 => {
+      return fetchMoreData(value1)
+    })
+    .then(value2 => {
+      return fetchMoreData2(value2)
+    })
+  )
+}
+
+// 改进
+async function fetch() {
+  const value1 = await fetchData()
+  const value2 = await fetchMoreData(value1)
+  return fetchMoreData2(value2)
+};
+
+```
+
+2. 错误处理
+async/await 的出现使得 try/catch 就可以捕获同步和异步的错误
+
+3. 调试
+- 因为 then 中的函数是异步执行的，所以当你打断点的时候，代码不会顺序执行，尤其当你使用 step over 的时候，then 函数会直接进入下一个 then 函数
+
+- 而使用 async 的时候，则可以像调试同步函数一样
+
+### async 地狱
+主要指开发者贪图语法上的简洁而让原本可以并行执行的内容变成了顺序执行，从而影响了性能
+
+1. 找出依赖关系
+2. 将相互依赖的语句包裹在 async 语句中
+3. 并发执行 async 函数
+
+### 继发与并发
+并发实现
+
+```javascript
+// 并发一
+async function loadData() {
+  var res = await Promise.all([fetch(url1), fetch(url2), fetch(url3)]);
+  return "whew all done";
+}
+```
 
 # Proxy
+Proxy 作为一个拦截器，可以在目标对象前架设一个拦截器，他人访问对象，必须先经过这层拦截器。Proxy 同样是一个构造函数，使用 new 关键字生成一个拦截对象的实例，一般和 Reflect 配套使用
 
+
+### handler.contract
+contruct 可以拦截通过new关键字调用这个函数的操作,我们可以把它用在单例模式中
+
+
+# 箭头函数
+### 箭头函数和普通函数的主要区别包括：
+
+1. 没有 this
+**箭头函数没有 this，所以需要通过作用域链来确定 this 的值**
+这就意味着如果箭头函数被非箭头函数包含，this 绑定的就是最近一层非箭头函数的 this
+
+2. 没有 arguments
+
+
+- 可以通过命名参数或者 rest 参数的形式访问参数
+```javascript
+let nums = (...nums) => nums;
+```
+
+3. 不能通过 new 关键词调用
+- 箭头函数并没有 [[Construct]] 方法，不能被用作构造函数，如果通过 new 的方式调用，会报错
+```javascript
+var Foo = () => {};
+var foo = new Foo(); // TypeError: Foo is not a constructor
+```
 
 
 

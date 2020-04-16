@@ -1,8 +1,9 @@
 # js 相关
 ## js call, apply, bind那些事
+---
 - 这三个函数存在的意义是什么？
--改变函数执行时的上下文环境
--具体一点就是改变函数执行时的this指向
+1. 改变函数执行时的上下文环境
+2. 具体一点就是改变函数执行时的this指向
 ```javascript
 fucntion Person(name) {
   this.name = name;
@@ -63,7 +64,8 @@ let arrayLike = {
 let arr = Array.prototype.slice.call(arrayLike);
 ```
 
-## 深克隆
+## 深浅克隆
+---
 资料来源： https://juejin.im/post/5abb55ee6fb9a028e33b7e0a
 
 - 在实现一个深克隆之前我们需要先了解一下javascript中的基础类型
@@ -144,6 +146,7 @@ console.log(newObj.d.constructor, oldObj.d.constructor);  // [Function: Object] 
 ```
 
 ## 防抖，节流
+---
 资料来源：https://github.com/mqyqingfeng/Blog/issues/22
 - 防抖（debounce): 在事件被触发n秒之后执行，如果在此期间在次触发事件，则重新开始计算
 
@@ -1191,6 +1194,7 @@ fn is not a function
 所以在js中，变量的声明会被提升，变量的赋值则不会。使用函数声明式时，函数体也会被一起提升
 
 ## 执行上下文
+---
 资料来源：https://juejin.im/post/5ba32171f265da0ab719a6d7
 - 什么是执行上下文
 
@@ -1210,4 +1214,14 @@ fn is not a function
 1. this 值的决定，即我们所熟知的 this 绑定
 2. 创建 词法环境 组件
 3. 创建 变量环境 组件
+
+## 事件循环
+---
+资料来源：
+https://juejin.im/entry/5a8bc3215188257a856f4b2b
+
+
+
+
+
 
