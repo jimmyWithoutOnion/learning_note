@@ -262,3 +262,206 @@ var corpFlightBookings = function (bookings, n) {
 
 
 
+// 树相关 刷题
+// 树相关 刷题
+// 树相关 刷题
+// 树相关 刷题
+// 树相关 刷题
+// 226 翻转二叉树 
+// 简单 
+
+
+// 递归实现 
+// var invertTree = function(root) {
+//     invertTreeHelper(root)
+//     return root
+// };
+
+
+// var invertTreeHelper = function(root) {
+//     if (root) {
+//         temp = root.left
+//         root.left = root.right
+//         root.right = temp
+
+//         //console.log(root.left)
+//         invertTreeHelper(root.left)
+//         invertTreeHelper(root.right)
+//     }
+// }
+
+// bfs 实现
+var invertTree = function (root) {
+    let queue = []
+    let res = root
+
+    queue.push(res)
+    while (queue.length != 0) {
+        let node = queue.shift()
+        if (!node) {
+            break
+        }
+        temp = node.left
+        node.left = node.right
+        node.right = temp
+
+        if (node.right) {
+            queue.push(node.right)
+        }
+        if (node.left) {
+            queue.push(node.left)
+        }
+
+    }
+    return res
+}
+
+// 144 二叉树的前序遍历
+// 中等
+
+// 递归实现
+var preorderTraversal = function (root) {
+    let res = []
+    preorderTraversalHelper(root, res)
+    return res
+};
+
+var preorderTraversalHelper = function (node, list) {
+
+    if (!node) {
+        return
+    }
+    list.push(node.val)
+    preorderTraversalHelper(node.left, list)
+    preorderTraversalHelper(node.right, list)
+
+}
+
+// 迭代实现
+var preorderTraversal = function (root) {
+    let stack = []
+    stack.push(root)
+    let res = []
+
+    while (stack.length != 0) {
+        let node = stack.pop()
+        if (!node) {
+            continue
+        }
+        res.push(node.val)
+
+        stack.push(node.right)
+        stack.push(node.left)
+
+
+    }
+    return res
+
+}
+
+
+// 莫里斯实现
+
+
+// 94 二叉树的中序遍历 
+// 中等
+
+// 递归实现
+var inorderTraversal = function (root) {
+    let res = []
+    traversalHelper(root, res)
+    return res
+};
+
+var traversalHelper = function (node, list) {
+    if (node != null) {
+        if (node.left) {
+            traversalHelper(node.left, list)
+        }
+        list.push(node.val)
+        if (node.right) {
+            traversalHelper(node.right, list)
+        }
+    }
+}
+
+// 迭代实现
+var inorderTraversal = function (root) {
+    let stack = []
+    let res = []
+
+    while (root != null || stack.length != 0) {
+        while (root) {
+            stack.push(root)
+            root = root.left
+        }
+
+        let child = stack.pop()
+        res.push(child.val)
+        root = child.right
+
+    }
+    return res
+}
+
+// 莫里斯实现
+var inorderTraversal = function (root) {
+
+}
+
+
+
+
+// 145 二叉树的后序遍历
+// 困难
+
+// 递归实现
+var postorderTraversal = function (root) {
+    let res = []
+    postoederTraversalHelper(root, res)
+    return res
+};
+
+var postoederTraversalHelper = function (node, list) {
+    if (!node) {
+        return
+    }
+    postoederTraversalHelper(node.left, list)
+    postoederTraversalHelper(node.right, list)
+    list.push(node.val)
+}
+
+// 迭代实现
+var postorderTraversal = function (root) {
+    let stack = []
+    let res = []
+    // 标记去过的右儿子
+    let last = null
+
+    while (root != null || stack.length != 0) {
+        // 左儿子装到底
+        while (root) {
+            stack.push(root)
+            root = root.left
+        }
+
+        let child = stack[stack.length - 1]
+        // 看有没有右儿子
+        // 没有右儿子或者右儿子已经被标记过了
+        if (child.right == null || child.right == last) {
+
+            stack.pop()
+            res.push(child.val)
+            last = child
+
+            // 有右儿子
+        } else {
+            root = child.right
+        }
+
+    }
+
+    return res
+}
+
+// 莫里斯实现
