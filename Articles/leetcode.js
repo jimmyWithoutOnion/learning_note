@@ -465,3 +465,61 @@ var postorderTraversal = function (root) {
 }
 
 // 莫里斯实现
+
+
+
+
+// 530 二叉搜索树的最小绝对值差
+// 简单
+
+var getMinimumDifference = function (root) {
+
+    let res = Number.MAX_VALUE
+    let stack = []
+    let pre = Number.MAX_VALUE, cur = 0
+
+    while (root != null || stack.length != 0) {
+
+        while (root) {
+            stack.push(root)
+            root = root.left
+        }
+        let node = stack.pop()
+
+
+
+        cur = node.val
+        if (Math.abs(cur - pre) < res) {
+            res = Math.abs(cur - pre)
+        }
+        pre = cur
+        root = node.right
+    }
+    return res
+};
+
+
+
+// 108 将有序数组转换为二叉搜索树
+// 简单
+
+var sortedArrayToBST = function (nums) {
+    let start = 0
+    let end = nums.length - 1
+    return sortedArrayToBSTHelper(start, end, nums)
+
+};
+
+
+var sortedArrayToBSTHelper = function (start, end, nums) {
+    if (start > end) {
+        return null
+    }
+    let rootIndex = Math.floor(start - (start - end) / 2)
+    let root = new TreeNode(nums[rootIndex])
+
+    root.left = sortedArrayToBSTHelper(start, rootIndex - 1, nums)
+    root.right = sortedArrayToBSTHelper(rootIndex + 1, end, nums)
+
+    return root
+}
