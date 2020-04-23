@@ -523,3 +523,91 @@ var sortedArrayToBSTHelper = function (start, end, nums) {
 
     return root
 }
+
+
+// 动态规划问题
+// 70 爬梯子
+// 简单
+var climbStairs = function (n) {
+    let res = new Array(n + 1)
+    res[0] = 1
+    res[1] = 1
+
+    for (let i = 2; i <= n; i++) {
+        res[i] = res[i - 1] + res[i - 2]
+    }
+
+    return res[n]
+};
+
+// 62 不同路径
+// 中等
+var uniquePaths = function (m, n) {
+
+    let dp = new Array(m)
+    for (let i = 0; i < m; i++) {
+        dp[i] = new Array(n)
+    }
+    for (let i = 0; i < m; i++) {
+        dp[i][0] = 1
+    }
+    for (let j = 0; j < n; j++) {
+        dp[0][j] = 1
+    }
+
+
+    for (let i = 1; i < m; i++) {
+        for (let j = 1; j < n; j++) {
+            dp[i][j] = dp[i][j - 1] + dp[i - 1][j]
+        }
+    }
+    return dp[m - 1][n - 1]
+};
+
+
+// 64 最小路径和
+// 中等
+var minPathSum = function (grid) {
+    // corner case
+    if (!grid) {
+        return null
+    }
+    let row = grid.length
+    let column = grid[0].length
+
+    // init array
+    let dp = new Array(row)
+    for (let i = 0; i < row; i++) {
+        dp[i] = new Array(column).fill(0)
+    }
+    dp[0][0] = grid[0][0]
+    // init base case
+    for (let i = 1; i < row; i++) {
+        dp[i][0] = dp[i - 1][0] + grid[i][0]
+    }
+
+    for (let i = 1; i < column; i++) {
+        dp[0][i] = dp[0][i - 1] + grid[0][i]
+    }
+
+    for (let i = 1; i < row; i++) {
+        for (let j = 1; j < column; j++) {
+            dp[i][j] = Math.min(dp[i - 1][j], dp[i][j - 1]) + grid[i][j]
+        }
+    }
+    return dp[row - 1][column - 1]
+};
+
+
+// 1071 字符串的最大公约子
+// 简单
+var gcdOfStrings = function (str1, str2) {
+    if (str1 + str2 !== str2 + str1) {
+        return ''
+    }
+    // 辗转相除法
+    var gcd = function (num1, num2) {
+        return num2 === 0 ? num1 : gcd(num2, num1 % num2)
+    }
+    return str1.substr(0, gcd(str1.length, str2.length))
+};
