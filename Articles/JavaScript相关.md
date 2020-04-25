@@ -760,7 +760,7 @@ console.log(instance2.colors); // 'red,blue,green'
 
 2. 组合继承
 组合继承也叫伪经典继承
-基本思路：使用原型链实现对原型属性和方法对继承，通过借用构造函数来实现对实例属性对继承
+基本思路：使用原型链实现对原型属性和方法的继承，通过借用构造函数来实现对实例属性对继承
 ```javascript
 function Father(name) {
     this.name = name;

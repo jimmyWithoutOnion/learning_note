@@ -133,7 +133,7 @@ console.log(s instanceof Symbol); // false
 4. Symbol 函数可以接受一个字符串作为参数，表示对 Symbol 实例对描述，主要为了在控制台显示或转为字符串时，比较容易区分
 ```javascript
 let s = Symbol('foo');
-console.log(2); // Symbol(foo)
+console.log(s); // Symbol(foo)
 ```
 
 5. 如果 Symbol 的参数是一个对象，会调用对象的 toString 方法，将其转化为字符串，然后才生成一个 Symbol 值
