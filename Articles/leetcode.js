@@ -611,3 +611,23 @@ var gcdOfStrings = function (str1, str2) {
     }
     return str1.substr(0, gcd(str1.length, str2.length))
 };
+
+
+
+// 104 二叉树的最大深度
+// 简单
+// 递归实现
+var maxDepth = function (root) {
+    if (!root) {
+        return 0
+    }
+    if (root.left == null && root.right == null) {
+        return 1
+    }
+    return Math.max(maxDepth(root.left), maxDepth(root.right)) + 1
+};
+
+// 迭代实现
+
+
+
