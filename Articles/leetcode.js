@@ -631,3 +631,20 @@ var maxDepth = function (root) {
 
 
 
+// 101 对称二叉树
+// 简单
+// 递归实现
+var isSymmetric = function (root) {
+    return isMirror(root, root)
+};
+
+var isMirror = function (left, right) {
+    if (left == null && right == null) {
+        return true
+    }
+    if (left == null || right == null) {
+        return false
+    }
+
+    return (left.val == right.val) && isMirror(left.right, right.left) && isMirror(left.left, right.right)
+}
