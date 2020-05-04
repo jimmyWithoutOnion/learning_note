@@ -648,3 +648,36 @@ var isMirror = function (left, right) {
 
     return (left.val == right.val) && isMirror(left.right, right.left) && isMirror(left.left, right.right)
 }
+
+
+// 107 二叉树的层序遍历II
+// 简单
+// 性能有点低
+var levelOrderBottom = function (root) {
+    if (!root) {
+        return []
+    }
+    let queue = []
+    let result = []
+    queue.push({ node: root, level: 0 })
+    while (queue.length != 0) {
+        let nodeItem = queue.shift()
+
+        if (nodeItem.node.left) {
+            queue.push({ node: nodeItem.node.left, level: nodeItem.level + 1 })
+        }
+        if (nodeItem.node.right) {
+            queue.push({ node: nodeItem.node.right, level: nodeItem.level + 1 })
+        }
+        console.log(nodeItem)
+        if (result[nodeItem.level] == undefined) {
+            let temp = []
+            temp.push(nodeItem.node.val)
+            result.push(temp)
+
+        } else {
+            result[nodeItem.level].push(nodeItem.node.val)
+        }
+    }
+    return result.reverse()
+};
